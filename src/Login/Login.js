@@ -4,7 +4,13 @@ import { useNavigate } from "react-router-dom";
 
 import { provider, auth as fbAuth } from "../fb.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  setPersistence,
+  signInWithEmailAndPassword,
+  browserSessionPersistence,
+} from "firebase/auth";
+import "./login.css";
+import "./loading.css";
 
 const Login = () => {
   //
@@ -12,6 +18,9 @@ const Login = () => {
   //use state hook for email and password
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  //loading function
+  const [loading, setLoading] = useState(false);
+
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -26,18 +35,23 @@ const Login = () => {
   // Sign in with email
   const signInWithEmail = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {}, 2000);
     const auth = getAuth();
+
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
         setUser(user);
+        setLoading(false);
         // ...
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         alert(errorMessage);
+        setLoading(false);
       });
   };
 
@@ -66,7 +80,6 @@ const Login = () => {
 
         const email = error.email;
         // The AuthCredential type that was used.
-
         const credential = GoogleAuthProvider.credentialFromError(error);
         alert(errorMessage, email, credential);
 
@@ -75,25 +88,50 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <center>
-        <h1>Login</h1>
-        {/* create a form to accept email and password */}
-        <form>
+    <div className="login-container">
+      <div className="login-form">
+        <h1 className="login-heading">Login</h1>
+        <form className="loginForm" onSubmit={signInWithEmail}>
           <input
+            className="loginInput"
             type="email"
             placeholder="Email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
+            className="loginInput"
             type="password"
             placeholder="Password"
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button onClick={signInWithEmail}>Login</button>
+          <button className="loginSubmitBtn" type="submit">
+            Login
+          </button>
         </form>
-        <button onClick={signin}>Login with Google</button>
-      </center>
+        {/* create divider with "or continue text " in it */}
+        <div className="divider">or continue with</div>
+
+        <button className="loginSubmitBtn" onClick={signin}>
+          Sign in with Google
+        </button>
+
+        <p>
+          Don't have an account? <a href="/signup">Sign up</a>
+        </p>
+      </div>
+      {/* loading popup */}
+      {loading && (
+        <div className="loading-container">
+          <div class="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
