@@ -55,7 +55,10 @@ const Login = () => {
       });
   };
 
-  // Sign in with email and password
+  // on Sign up click
+  const signUpRedirect = () => {
+    navigate("signup", { replace: true });
+  };
 
   const signin = () => {
     const auth = getAuth();
@@ -119,7 +122,8 @@ const Login = () => {
           </button>
 
           <p>
-            Don't have an account? <a href="/signup">Sign up</a>
+            Don't have an account?{" "}
+            <strong onClick={signUpRedirect}>Sign up</strong>
           </p>
         </div>
         {/* loading popup */}
