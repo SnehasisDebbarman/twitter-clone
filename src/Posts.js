@@ -3,14 +3,14 @@ import { db } from "./fb";
 import { collection, getDocs } from "firebase/firestore";
 import "./styles/posts.css";
 
-export default function Posts() {
+export default function Posts({ change }) {
   //create style
 
   //posts hook
   const [posts, setPosts] = React.useState([]);
   React.useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [change]);
 
   //get all posts
   async function getAllPosts() {

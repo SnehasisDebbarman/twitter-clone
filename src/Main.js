@@ -8,23 +8,6 @@ import { db, storage } from "./fb";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import Posts from "./Posts";
 
-function updateName(auth, name) {
-  updateProfile(auth.currentUser, {
-    displayName: name,
-  })
-    .then(() => {
-      // Profile updated!
-      alert("Name updated!");
-      // ...
-    })
-    .catch((error) => {
-      // An error occurred
-      alert("Error updating name!", error.message);
-      console.log(error.message);
-      // ...
-    });
-}
-
 export default function Main() {
   //name hook
   const [updatedName, setName] = useState("");
@@ -36,6 +19,29 @@ export default function Main() {
   const [images, setImages] = useState([]);
   //imageUrls hook
   const [imageUrls, setImageUrls] = useState([]);
+  //change detect hook
+  const [change, setChange] = useState(false);
+  //namechange detect hook
+  const [nameChange, setNameChange] = useState(false);
+  //
+
+  function updateName(auth, name) {
+    updateProfile(auth.currentUser, {
+      displayName: name,
+    })
+      .then(() => {
+        // Profile updated!
+        alert("Name updated!");
+
+        // ...
+      })
+      .catch((error) => {
+        // An error occurred
+        alert("Error updating name!", error.message);
+        console.log(error.message);
+        // ...
+      });
+  }
 
   //useEffect hook for save image into image urls
   useEffect(() => {
@@ -95,6 +101,11 @@ export default function Main() {
         photoURL: user.photoURL ? user.photoURL : profileIcon,
         //!should change this because it is not the real image link
         postImage: imageUrls,
+      }).then(() => {
+        setPost("");
+        setImages([]);
+        setImageUrls([]);
+        setChange(!change);
       });
       console.log("Document written with ID: ", docRef.id);
       setPost("");
@@ -242,7 +253,7 @@ export default function Main() {
           )}
           {/* write jsx post */}
           <div className="main-post-container">
-            <Posts />
+            <Posts change={change} />
           </div>
 
           {/* write jsx to for menu with user name email logout and edit button*/}
