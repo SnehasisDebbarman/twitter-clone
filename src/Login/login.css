@@ -4,16 +4,29 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
+.login-card{
+  margin-top: 20vh;
+  padding: 30px;
+  border-radius: 20px;
+background: #ffffff;
+box-shadow:  31px 31px 70px #858585,
+             -31px -31px 70px #ffffff;
+}
+/*  */
 .login-heading{
     font-size: 3rem;
     color: rgb(255, 140, 140);
     text-align: center;
+    border-radius: 22px;
+
 }
 .loginForm{
     width:30vw;
     display: flex;
-    flex-direction: column;   
+    flex-direction: column;  
+   
 }
 .loginInput{
     width: 30vw;
@@ -36,9 +49,11 @@
     background-color: rgb(235, 147, 147);
     color: white;
     font-style: bold;
+    font-weight: 800;
+    
 }
 .loginSubmitBtn:hover{
-    background-color: rgb(209, 70, 70);
+    background-color: rgb(218, 114, 114);
 }
 .divider {
     display: flex;

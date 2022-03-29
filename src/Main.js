@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import profileIcon from "./assets/profile.png";
-import { db } from "./fb";
+import { db, storage } from "./fb";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import Posts from "./Posts";
 
@@ -32,6 +32,21 @@ export default function Main() {
   const [showEdit, setShowEdit] = useState(false);
   //post Hook
   const [post, setPost] = useState("");
+  //images hook
+  const [images, setImages] = useState([]);
+  //imageUrls hook
+  const [imageUrls, setImageUrls] = useState([]);
+
+  //useEffect hook for save image into image urls
+  useEffect(() => {
+    if (images.length > 0) {
+      for (let i = 0; i < images.length; i++) {
+        //!also change this and make sure it is the uplod into right url
+        setImageUrls((prev) => [...prev, URL.createObjectURL(images[i])]);
+      }
+    }
+  }, [images]);
+
   const auth = getAuth();
   let navigate = useNavigate();
   //usestate for user
@@ -43,15 +58,10 @@ export default function Main() {
     console.count();
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
         setUser(user);
-        // ...
       } else {
         // User is signed out
         navigate("/");
-        // ...
       }
     });
   }, []);
@@ -83,17 +93,55 @@ export default function Main() {
         postText: post,
         time: Timestamp.now(),
         photoURL: user.photoURL ? user.photoURL : profileIcon,
+        //!should change this because it is not the real image link
+        postImage: imageUrls,
       });
       console.log("Document written with ID: ", docRef.id);
       setPost("");
+      setImages([]);
+      setImageUrls([]);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   };
+  function onImageChange(e) {
+    setImages([]);
+    setImageUrls([]);
+    setImages([e.target.files[0]]);
+  }
+
   //handle menu function
   const handleMenu = () => {
     setShowMenu(!showMenu);
   };
+  const uploadImage = (
+    <div>
+      <label
+        htmlFor="filePicker"
+        style={{ background: "grey", padding: "5px 10px" }}
+      >
+        Choose
+      </label>
+      <input
+        id="filePicker"
+        style={{ visibility: "hidden" }}
+        className="main-image-input"
+        type="file"
+        placeholder="Add a photo"
+        text="Add a photo"
+        accept="image/*"
+        onChange={onImageChange}
+      />
+    </div>
+  );
+  const showUploadedImage = (
+    <div className="main-input-image-container">
+      {imageUrls.map((imageUrl) => {
+        console.log(imageUrl);
+        return <img className="main-input-image" src={imageUrl} alt="user" />;
+      })}
+    </div>
+  );
   return (
     <div className="main-container">
       <div className="main-container-left">
@@ -107,14 +155,17 @@ export default function Main() {
               />
               <h5 className="main-card-title">{user.displayName}</h5>
               <p className="main-card-text">{user.email}</p>
-              {!showEdit && (
+              {/**
+               ** TODO : incomment this when you solve the image issue
+               */}
+              {/* {!showEdit && (
                 <button
                   className="main-btn"
                   onClick={() => setShowEdit(!showEdit)}
                 >
                   Edit
                 </button>
-              )}
+              )} */}
               {showEdit && (
                 <>
                   <input
@@ -153,21 +204,35 @@ export default function Main() {
         <div>
           {/* write jsx user image with input */}
           {user && (
-            <div className="input-post-holder">
-              <img
-                className="main-input-user-img"
-                src={user.photoURL ? user.photoURL : profileIcon}
-                alt="user"
-              />
-              <textarea
-                className="main-input-post"
-                type="text"
-                placeholder="What's Happening?"
-                value={post}
-                onChange={(e) => setPost(e.target.value)}
-              />
-              {/* post button */}
-              <div></div>
+            <div className="input-container">
+              <div className="input-post-holder">
+                <img
+                  className="main-input-user-img"
+                  src={user.photoURL ? user.photoURL : profileIcon}
+                  alt="user"
+                />
+                <textarea
+                  className="main-input-post"
+                  type="text"
+                  placeholder="What's Happening?"
+                  value={post}
+                  onChange={(e) => {
+                    //create a program which convert user-entered whitespace to a template literal
+                    //and then convert it back to a string
+                    setPost(e.target.value);
+                  }}
+                />
+                {/*
+                 *! TODO: should change this to a function when you solved upload image problem
+                 */}
+                {/* {uploadImage}
+
+                <div></div>
+                <div></div>
+                {showUploadedImage} */}
+
+                {/* post button */}
+              </div>
               <div className="main-post-btn-container">
                 <button className="main-input-btn" onClick={updatePost}>
                   Post

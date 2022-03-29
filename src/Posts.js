@@ -38,42 +38,79 @@ export default function Posts() {
     const now = new Date();
     const seconds = (now.getTime() - time.getTime()) / 1000;
     if (seconds < 60) {
-      return Math.round(seconds) + " seconds ago";
+      return Math.round(seconds) + " s";
     }
     if (seconds < 3600) {
-      return Math.round(seconds / 60) + " minutes ago";
+      return Math.round(seconds / 60) + " mins";
     }
     if (seconds < 86400) {
-      return Math.round(seconds / 3600) + " hours ago";
+      return Math.round(seconds / 3600) + " hrs";
     }
     if (seconds < 604800) {
-      return Math.round(seconds / 86400) + " days ago";
+      return Math.round(seconds / 86400) + " d";
     }
     if (seconds < 2419200) {
-      return Math.round(seconds / 604800) + " weeks ago";
+      return Math.round(seconds / 604800) + " wk";
     }
     if (seconds < 29030400) {
-      return Math.round(seconds / 2419200) + " months ago";
+      return Math.round(seconds / 2419200) + " mnths";
     }
-    return Math.round(seconds / 29030400) + " years ago";
+    return Math.round(seconds / 29030400) + " yrs";
   }
   return (
     <div className="post-cards-container">
-      {posts.map((post, index) => (
-        <div className="post-card" key={index}>
-          <div className="post-card-body">
-            <div className="post-flex">
-              <img src={post.photoURL} alt={post.userName} />
-              <h4>{post.userName}</h4>
+      <div className="post-heading">
+        <h3>Feeds </h3>
+      </div>
+      {posts.map((post, index) => {
+        console.log(post.photoURL);
+        return (
+          <div className="post-card" key={index}>
+            <div className="post-card-body">
+              <div className="post-flex">
+                <img
+                  src={
+                    post.photoURL
+                      ? post.photoURL
+                      : "https://i.imgur.com/2Y8WQYv.png"
+                  }
+                  alt="user"
+                />
+              </div>
+              <div>
+                <p className="post-username">
+                  {post.userName}
+                  <span className="post-hours">
+                    {timeAgo(secondsToDate(post.time.seconds))}
+                  </span>
+                </p>
+                <span className="post-body" style={{ whiteSpace: "pre-warp" }}>
+                  {
+                    //convert this text into multiple lines
+                    post.postText.split("\n").map((item, index) => {
+                      return (
+                        <span key={index}>
+                          {item}
+                          <br />
+                        </span>
+                      );
+                    })
+                  }
+                </span>
+              </div>
+              {/* <div className="id">{post.id}</div> */}
+              {/*
+               * do this when you solve the problem of the image not showing
+               */}
+              {/* <div>
+                {post.postImage && (
+                  <img className="post-image" src={post.postImage} alt="post" />
+                )}
+              </div> */}
             </div>
-
-            <h3 className="post-body">{post.postText}</h3>
-            <p>Posted on {timeAgo(secondsToDate(post.time.seconds))}</p>
-
-            {/* <div className="id">{post.id}</div> */}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
