@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
+import "./signup.css";
 
 export default function Signup() {
   //
@@ -75,26 +76,23 @@ export default function Signup() {
       }}
     >
       {/* create a form to accept email and password */}
-      <form>
-        <label>Name:</label>
+      <form className="signup-form">
+        <h3>Sign Up</h3>
         <input
+          placeholder="name"
           type="text"
           value={updatedName}
           onChange={(e) => setUpdatedName(e.target.value)}
         />
 
-        <br></br>
-        <label>Email:</label>
-
         <input
           type="email"
-          placeholder="Email"
+          placeholder="email"
           onChange={(e) => {
             setEmail(e.target.value);
           }}
         />
-        <br></br>
-        <label>Password:</label>
+
         <input
           type="password"
           placeholder="Password"
