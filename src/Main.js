@@ -6,9 +6,11 @@ import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import profileIcon from "./assets/profile.png";
 import { db, storage } from "./fb";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import Posts from "./Posts";
+import { v4 as uuidv4 } from "uuid";
+import Posts from "./Posts/Posts";
 
 export default function Main() {
+  const [auth, setAuth] = useState(getAuth());
   //name hook
   const [updatedName, setName] = useState("");
   //showedit hoook
@@ -23,8 +25,16 @@ export default function Main() {
   const [change, setChange] = useState(false);
   //namechange detect hook
   const [nameChange, setNameChange] = useState(false);
-  //
+  //usestate for user
+  const [user, setUser] = React.useState(auth.currentUser);
+  //showMenu usestate
+  const [showMenu, setShowMenu] = React.useState(false);
 
+  //saving auth in auth hook
+
+  let navigate = useNavigate();
+
+  // updating the name of the user
   function updateName(auth, name) {
     updateProfile(auth.currentUser, {
       displayName: name,
@@ -53,12 +63,6 @@ export default function Main() {
     }
   }, [images]);
 
-  const auth = getAuth();
-  let navigate = useNavigate();
-  //usestate for user
-  const [user, setUser] = React.useState(auth.currentUser);
-  //showMenu usestate
-  const [showMenu, setShowMenu] = React.useState(false);
   //preserve user after refresh
   useEffect(() => {
     console.count();
@@ -67,10 +71,11 @@ export default function Main() {
         setUser(user);
       } else {
         // User is signed out
-        navigate("/");
+        navigate("../");
       }
     });
   }, []);
+
   //update name function
   const updateNameFunc = (e) => {
     e.preventDefault();
@@ -78,7 +83,6 @@ export default function Main() {
     setShowEdit(false);
   };
 
-  //
   const logout = () => {
     signOut(auth)
       .then(() => {
@@ -90,9 +94,11 @@ export default function Main() {
         alert(error.message);
       });
   };
+
   const updatePost = async () => {
     try {
       const docRef = await addDoc(collection(db, "posts"), {
+        postId: uuidv4(),
         userId: user.uid,
         userName: user.displayName ? user.displayName : "Anonymous",
         email: user.email,
@@ -101,6 +107,7 @@ export default function Main() {
         photoURL: user.photoURL ? user.photoURL : profileIcon,
         //!should change this because it is not the real image link
         postImage: imageUrls,
+        postLikes: [],
       }).then(() => {
         setPost("");
         setImages([]);
@@ -268,7 +275,7 @@ export default function Main() {
                   />
                   <h5 className="main-menu-user-name">{user.displayName}</h5>
                   <p className="main-menu-user-name">{user.email}</p>
-
+                  {/* 
                   {!showEdit && (
                     <button
                       className="main-btn"
@@ -293,7 +300,7 @@ export default function Main() {
                         update Name
                       </button>
                     </>
-                  )}
+                  )} */}
                   <button className="main-btn" onClick={logout}>
                     Logout
                   </button>

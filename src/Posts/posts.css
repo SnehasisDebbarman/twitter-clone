@@ -31,7 +31,7 @@
     transition: 0.2s ease-in-out;
 }
 .post-card:hover{
-    background-color: rgb(253, 231, 226);
+    background-color: rgb(254, 249, 249);
 }
 
 
@@ -66,4 +66,17 @@
 .post-body{
     color: rgb(0, 0, 0);
     font-size: 14px;
+}
+.post-like-btn{
+    outline: none;
+    border: none;
+    background: none;
+    color: rgb(0, 0, 0);
+    height: 30px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 10px 10px;
+    cursor: pointer;
+    background-image: url(../assets/like.svg);
+    background-repeat: no-repeat;
 }

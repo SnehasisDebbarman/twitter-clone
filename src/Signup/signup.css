@@ -53,3 +53,11 @@
     transition: all 0.5s ease-in-out;
    
 }
+@media screen and (max-width: 600px){
+    .signup-form{
+        margin-top: 20vh;
+        width: 90vw;
+        height: 60vh;
+    }
+}
+    

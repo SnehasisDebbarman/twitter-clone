@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { db } from "../fb";
+import profileIcon from "../assets/profile.png";
 import "./signup.css";
 
 export default function Signup() {
@@ -13,9 +16,27 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   //updated name
   const [updatedName, setUpdatedName] = useState("");
+  const [auth, setAuth] = useState(getAuth());
+  const [loading, setLoading] = useState(false);
 
-  const auth = getAuth();
   let navigate = useNavigate();
+  //add user
+  const addUser = async (user) => {
+    try {
+      const docRef = await addDoc(
+        collection(db, "users", user.uid, {
+          userId: user.uid,
+          userName: user.displayName ? user.displayName : "Anonymous",
+          email: user.email,
+          time: Timestamp.now(),
+          photoURL: user.photoURL ? user.photoURL : profileIcon,
+        })
+      ).then(() => {});
+      console.log("user added written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  };
 
   function updateName(auth, name) {
     updateProfile(auth.currentUser, {
@@ -33,12 +54,15 @@ export default function Signup() {
       });
   }
   //check user is null or not and redirect to main page
-  if (user) {
-    navigate("../main", { replace: true });
-  }
+  useEffect(() => {
+    if (user) {
+      navigate("../main", { replace: true });
+    }
+  }, [user]);
 
   // Sign in with email
   const signInWithEmail = (e) => {
+    setLoading(true);
     e.preventDefault();
     signInWithEmailAndPassword(email, password);
   };
@@ -49,11 +73,14 @@ export default function Signup() {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
+        //adding user information in database
 
+        //updated the name
+        updateName(auth, updatedName);
         setTimeout(() => {
-          updateName(auth, updatedName);
+          setUser(user);
         }, 3000);
-        setUser(user);
+        setLoading(false);
 
         // ...
       })
@@ -102,6 +129,16 @@ export default function Signup() {
         />
         <button onClick={signInWithEmail}>Signup</button>
       </form>
+      {loading && (
+        <div className="loading-container">
+          <div className="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

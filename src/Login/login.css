@@ -1,66 +1,80 @@
-.login-container{
-    width: 100vw;
-    height: 70vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
 .login-card{
-  margin-top: 20vh;
-  padding: 30px;
-  border-radius: 20px;
-background: #ffffff;
-box-shadow:  31px 31px 70px #858585,
-             -31px -31px 70px #ffffff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
 }
-/*  */
-.login-heading{
-    font-size: 3rem;
-    color: rgb(255, 140, 140);
-    text-align: center;
-    border-radius: 22px;
+.login-form{
+  margin-top: 10vh;
+  padding: 10px;
+  width: 40vw;
+  height: auto;
+  color: rgb(255, 141, 141);
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
 
 }
-.loginForm{
-    width:30vw;
-    display: flex;
-    flex-direction: column;  
-   
+.login-form h3{
+ text-align: center;
+ font-weight: 800;
+ font-size: 30px;
+
 }
-.loginInput{
-    width: 30vw;
-    height: 3vh;
-    border-radius: 5px;
-    border: none;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    
+
+.login-form input{
+  height: 30px;
+  margin: 10px 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: rgb(255, 220, 220);
+  border-radius: 5px;
 }
-.loginSubmitBtn{
-    all: reset !important;
-    width: 31.5vw;
-    border-radius: 5px;
-    border: none;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background-color: rgb(235, 147, 147);
-    color: white;
-    font-style: bold;
-    font-weight: 800;
-    
+.login-form input:hover{
+  border: none;
+
 }
-.loginSubmitBtn:hover{
-    background-color: rgb(218, 114, 114);
+.login-form input:focus{
+  border: none;
+
 }
+.login-form button{
+  height: auto;
+  margin: 20px 20px;
+  padding: 15px;
+  border: none;
+  background-color: rgb(240, 124, 124);
+  border-radius: 5px;
+}
+.login-form button:hover{
+  background-color: rgb(240, 102, 102);
+  transform: translateX(5px) translateY(-5px);
+  transition: all 0.5s ease-in-out;
+ 
+}
+@media screen and (max-width: 600px){
+  .login-form{
+      margin-top: 20vh;
+      width: 80vw;
+  }
+}
+  
+
 .divider {
     display: flex;
     align-items: center;
     text-align: center;
     margin:20px 0;
     color: rgb(189, 128, 128);
+    font-weight: 800;
   }
   
   /* To show the lines on right 
@@ -95,5 +109,3 @@ box-shadow:  31px 31px 70px #858585,
         z-index: 100;
         
   }
-
-

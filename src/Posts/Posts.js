@@ -1,7 +1,15 @@
 import React from "react";
-import { db } from "./fb";
-import { collection, getDocs } from "firebase/firestore";
-import "./styles/posts.css";
+import { db } from "../fb";
+import { getAuth } from "firebase/auth";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
+import "./posts.css";
 
 export default function Posts({ change }) {
   //create style
@@ -57,13 +65,41 @@ export default function Posts({ change }) {
     }
     return Math.round(seconds / 29030400) + " yrs";
   }
+
+  async function updatePostLikesCount(post) {
+    const pid = post.postId;
+    const q = query(collection(db, "posts"), where("postId", "==", pid));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((document) => {
+      const auth = getAuth();
+      const userId = auth.currentUser.uid;
+      // doc.data() is never undefined for query doc snapshots
+      console.log(document.id, " => ", document.data());
+      console.log(userId);
+      const docRef = doc(db, "posts", document.id);
+      let newPostLikes = post.postLikes;
+
+      newPostLikes.push(userId);
+      let npl = [...new Set(newPostLikes)];
+
+      console.log(document.data());
+      console.log(post);
+      const docData = {
+        ...post,
+        postLikes: npl,
+      };
+
+      setDoc(docRef, docData);
+    });
+  }
+
   return (
     <div className="post-cards-container">
       <div className="post-heading">
         <h3>Feeds </h3>
       </div>
       {posts.map((post, index) => {
-        console.log(post.photoURL);
         return (
           <div className="post-card" key={index}>
             <div className="post-card-body">
@@ -97,6 +133,13 @@ export default function Posts({ change }) {
                     })
                   }
                 </span>
+                <button
+                  className="post-like-btn"
+                  onClick={(item) => {
+                    updatePostLikesCount(post);
+                  }}
+                ></button>
+                <span> {"  " + post.postLikes.length}</span>
               </div>
               {/* <div className="id">{post.id}</div> */}
               {/*

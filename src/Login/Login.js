@@ -4,11 +4,15 @@ import { useNavigate } from "react-router-dom";
 
 import { provider, auth as fbAuth } from "../fb.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 import {
   setPersistence,
   signInWithEmailAndPassword,
   browserSessionPersistence,
 } from "firebase/auth";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { db } from "../fb";
+import profileIcon from "../assets/profile.png";
 import "./login.css";
 import "./loading.css";
 
@@ -22,6 +26,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   let navigate = useNavigate();
+  const auth = getAuth();
 
   useEffect(() => {
     setUser(fbAuth.currentUser);
@@ -37,12 +42,12 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {}, 2000);
-    const auth = getAuth();
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
+
         setUser(user);
         setLoading(false);
         // ...
@@ -91,53 +96,49 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-form">
-          <h1 className="login-heading">Login</h1>
-          <form className="loginForm" onSubmit={signInWithEmail}>
-            <input
-              className="loginInput"
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              className="loginInput"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button className="loginSubmitBtn" type="submit">
-              Login
-            </button>
-          </form>
-          {/* create divider with "or continue text " in it */}
-          <div className="divider">or continue with</div>
+    <div className="login-card">
+      <form className="login-form" onSubmit={signInWithEmail}>
+        <h3 className="login-heading">Login</h3>
+        <input
+          className="loginInput"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          className="loginInput"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button className="loginSubmitBtn" type="submit">
+          Login
+        </button>
+        <div className="divider">or continue with</div>
 
-          <button className="loginSubmitBtn" onClick={signin}>
-            Sign in with Google
-          </button>
+        <button className="googleSigninBtn" onClick={signin}>
+          Sign in with Google
+        </button>
 
-          <p>
-            Don't have an account?{" "}
-            <strong onClick={signUpRedirect}>Sign up</strong>
-          </p>
-        </div>
-        {/* loading popup */}
-        {loading && (
-          <div className="loading-container">
-            <div class="lds-ellipsis">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
+        <p style={{ textAlign: "center" }}>
+          Don't have an account?{" "}
+          <strong onClick={signUpRedirect}>Sign up</strong>
+        </p>
+      </form>
+      {/* create divider with "or continue text " in it */}
+      {/* loading popup */}
+      {loading && (
+        <div className="loading-container">
+          <div className="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
