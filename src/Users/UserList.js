@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "./userlist.css";
 import {
   collection,
   getDocs,
@@ -33,19 +34,24 @@ export default function UserList() {
     getAllPosts();
   }, []);
   return (
-    <div>
-      {users.map((user) => {
-        return (
-          <div key={user.userId}>
-            <div>
-              <img src={user.photoURL} alt="profile" />
+    <div className="user-list-container">
+      <h3>Users</h3>
+      <div>
+        {users.map((user) => {
+          return (
+            <div className="user-list-item" key={user.userId}>
+              <div className="user-list-img-container">
+                <img
+                  className="user-list-img"
+                  src={user.photoURL}
+                  alt="profile"
+                />
+              </div>
+              <div className="user-list-name">{user.userName}</div>
             </div>
-            <div>
-              <h3>{user.userName}</h3>
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

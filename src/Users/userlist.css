@@ -1,0 +1,44 @@
+.user-list-container {
+    width: 100%;
+    /* border-bottom: 0.5px solid grey; */
+}
+.user-list-item{
+    /*
+    make a down border with hover effect
+    */
+
+    border-bottom: 0.5px solid rgb(183, 183, 183);
+    width: 100%;
+}
+.user-list-container h3{
+    padding-left: 5%;
+    overflow: scroll;
+}
+.user-list-item:nth-child(1){
+    border-top: 0.5px solid rgb(183, 183, 183);
+}
+.user-list-item:hover{
+    background-color: rgb(244, 217, 209);
+}
+.user-list-item{
+    display: flex;
+    padding: 5px 5%;
+    gap: 5px;
+
+    align-items: center;
+}
+.user-list-img-container{
+    
+ 
+}
+.user-list-img{
+
+    border-radius: 50%;
+    width: 30px;
+}
+.user-list-name{
+    color: rgb(92, 92, 92);
+    font-size: 14px;
+    font-weight: 400;
+
+}

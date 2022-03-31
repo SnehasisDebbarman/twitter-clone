@@ -9,6 +9,8 @@ import { doc, collection, addDoc, setDoc, Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import Posts from "./Posts/Posts";
 import UserList from "./Users/UserList";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { ImCross } from "react-icons/im";
 
 export default function Main() {
   const [auth, setAuth] = useState(getAuth());
@@ -243,9 +245,10 @@ export default function Main() {
           <h3>Home </h3>
           {/* create a hamburger menu */}
           <div className="main-container-hamburger" onClick={handleMenu}>
+            {/* <div className="main-container-hamburger-line"></div>
             <div className="main-container-hamburger-line"></div>
-            <div className="main-container-hamburger-line"></div>
-            <div className="main-container-hamburger-line"></div>
+            <div className="main-container-hamburger-line"></div> */}
+            {!showMenu ? <GiHamburgerMenu /> : <ImCross />}
           </div>
         </div>
 
