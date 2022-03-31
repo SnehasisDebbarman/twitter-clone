@@ -3,12 +3,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { provider, auth as fbAuth } from "../fb.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  browserSessionPersistence,
+} from "firebase/auth";
 
 import {
   setPersistence,
   signInWithEmailAndPassword,
-  browserSessionPersistence,
+  inMemoryPersistence,
 } from "firebase/auth";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../fb";
@@ -30,12 +35,15 @@ const Login = () => {
 
   useEffect(() => {
     setUser(fbAuth.currentUser);
+    if (user) {
+      navigate("main");
+    }
   }, []);
   //add user for google login
 
   //check user is null or not and redirect to main page
   if (user) {
-    navigate("main", { replace: true });
+    navigate("main");
   }
 
   // Sign in with email
@@ -43,21 +51,23 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {}, 2000);
+    setPersistence(auth, inMemoryPersistence)
+      .then(() => {
+        return signInWithEmailAndPassword(auth, email, password).then(
+          (userCredential) => {
+            // Signed in
+            const user = userCredential.user;
 
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-
-        setUser(user);
-        setLoading(false);
-        // ...
+            setUser(user);
+            setLoading(false);
+            // ...
+          }
+        );
       })
       .catch((error) => {
+        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        alert(errorMessage);
-        setLoading(false);
       });
   };
 
@@ -68,31 +78,25 @@ const Login = () => {
 
   const signin = () => {
     const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
+    setPersistence(auth, inMemoryPersistence)
+      .then(() => {
+        return signInWithPopup(auth, provider).then((result) => {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
 
-        // The signed-in user info.
+          // The signed-in user info.
 
-        const user = result.user;
-        setUser(user);
-        console.log(user);
-        // ...
+          const user = result.user;
+          setUser(user);
+          console.log(user);
+          // ...
+        });
       })
       .catch((error) => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
-
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        alert(errorMessage, email, credential);
-
-        // ...
       });
   };
 
