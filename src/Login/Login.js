@@ -31,6 +31,7 @@ const Login = () => {
   useEffect(() => {
     setUser(fbAuth.currentUser);
   }, []);
+  //add user for google login
 
   //check user is null or not and redirect to main page
   if (user) {

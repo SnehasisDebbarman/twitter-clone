@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { db } from "../fb";
 import { getAuth } from "firebase/auth";
 import {
@@ -10,15 +10,27 @@ import {
   where,
 } from "firebase/firestore";
 import "./posts.css";
+//import iconns
+import { FcLike, FcLikePlaceholder } from "react-icons/fc";
+//react switch
+import Switch from "react-switch";
 
 export default function Posts({ change }) {
   //create style
 
   //posts hook
   const [posts, setPosts] = React.useState([]);
+  const [selfPost, setSelfPost] = useState(false);
+  const [switchSeeAllPost, setSwitchSeeAllPost] = useState(true);
   React.useEffect(() => {
     getAllPosts();
-  }, [change]);
+  }, [change, posts]);
+
+  //handle switch
+  const handleSwitchChange = () => {
+    setSelfPost(!selfPost);
+    setSwitchSeeAllPost(!switchSeeAllPost);
+  };
 
   //get all posts
   async function getAllPosts() {
@@ -32,8 +44,11 @@ export default function Posts({ change }) {
     postList.sort((a, b) => {
       return b.time.seconds - a.time.seconds;
     });
-
-    setPosts(postList);
+    selfPost
+      ? setPosts(
+          postList.filter((post) => post.userId === getAuth().currentUser.uid)
+        )
+      : setPosts(postList);
   }
   //seconds to date converter
   function secondsToDate(seconds) {
@@ -98,6 +113,10 @@ export default function Posts({ change }) {
     <div className="post-cards-container">
       <div className="post-heading">
         <h3>Feeds </h3>
+        <label className="post-seeAll-switch-container">
+          <Switch onChange={handleSwitchChange} checked={switchSeeAllPost} />
+          <span>See All</span>
+        </label>
       </div>
       {posts.map((post, index) => {
         return (
@@ -138,8 +157,17 @@ export default function Posts({ change }) {
                   onClick={(item) => {
                     updatePostLikesCount(post);
                   }}
-                ></button>
-                <span> {"  " + post.postLikes.length}</span>
+                >
+                  {post.postLikes.includes(getAuth().currentUser.uid) ? (
+                    <FcLike />
+                  ) : (
+                    <FcLikePlaceholder />
+                  )}
+                </button>
+                <span className="post-like-count">
+                  {" "}
+                  {"  " + post.postLikes.length}
+                </span>
               </div>
               {/* <div className="id">{post.id}</div> */}
               {/*

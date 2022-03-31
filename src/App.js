@@ -6,16 +6,19 @@ import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Main from "./Main";
 import Signup from "./Signup/Signup";
+import { RecoilRoot } from "recoil";
 
 function App() {
   //user hook
 
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="main" element={<Main />} />
-      <Route path="signup" element={<Signup />} />
-    </Routes>
+    <RecoilRoot>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="main" element={<Main />} />
+        <Route path="signup" element={<Signup />} />
+      </Routes>
+    </RecoilRoot>
   );
 }
 

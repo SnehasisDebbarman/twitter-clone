@@ -21,18 +21,16 @@ export default function Signup() {
 
   let navigate = useNavigate();
   //add user
-  const addUser = async (user) => {
+  const addUser = async () => {
     try {
-      const docRef = await addDoc(
-        collection(db, "users", user.uid, {
-          userId: user.uid,
-          userName: user.displayName ? user.displayName : "Anonymous",
-          email: user.email,
-          time: Timestamp.now(),
-          photoURL: user.photoURL ? user.photoURL : profileIcon,
-        })
-      ).then(() => {});
-      console.log("user added written with ID: ", docRef.id);
+      const docRef = await addDoc(collection(db, "users"), {
+        userId: user.uid,
+        userName: user.displayName ? user.displayName : "Anonymous",
+        email: user.email,
+        time: Timestamp.now(),
+        photoURL: user.photoURL ? user.photoURL : profileIcon,
+      }).then(() => {});
+      console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
     }

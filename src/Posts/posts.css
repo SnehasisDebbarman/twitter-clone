@@ -11,6 +11,17 @@
     color: rgb(95, 94, 94);
     margin-left: 20px;
 }
+.post-heading label{
+    font-size: 15px;
+    font-weight: bold;
+    color: rgb(95, 94, 94);
+    margin-right: 20px;
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
 .post-cards-container{
     width: 100%;
     height: auto;
@@ -72,11 +83,13 @@
     border: none;
     background: none;
     color: rgb(0, 0, 0);
-    height: 30px;
-    margin-right: 10px;
-    margin-top: 10px;
-    padding: 10px 10px;
+    padding-top: 20px;
+    padding-left: 0;
     cursor: pointer;
-    background-image: url(../assets/like.svg);
-    background-repeat: no-repeat;
+}
+.post-like-count{
+    color: rgb(125, 125, 125);
+    font-size: 13px;
+    font-weight: 600;
+    padding-left: 5px;
 }

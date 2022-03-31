@@ -5,9 +5,10 @@ import { useEffect } from "react";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import profileIcon from "./assets/profile.png";
 import { db, storage } from "./fb";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { doc, collection, addDoc, setDoc, Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import Posts from "./Posts/Posts";
+import UserList from "./Users/UserList";
 
 export default function Main() {
   const [auth, setAuth] = useState(getAuth());
@@ -29,6 +30,7 @@ export default function Main() {
   const [user, setUser] = React.useState(auth.currentUser);
   //showMenu usestate
   const [showMenu, setShowMenu] = React.useState(false);
+  //selfpost hook
 
   //saving auth in auth hook
 
@@ -52,6 +54,10 @@ export default function Main() {
         // ...
       });
   }
+  // write a fns to count the character of the post
+  function countChar(post) {
+    return post.length;
+  }
 
   //useEffect hook for save image into image urls
   useEffect(() => {
@@ -66,6 +72,7 @@ export default function Main() {
   //preserve user after refresh
   useEffect(() => {
     console.count();
+
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
@@ -75,6 +82,27 @@ export default function Main() {
       }
     });
   }, []);
+  //add user effect
+  useEffect(() => {
+    const addUser = async () => {
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          userId: user.uid,
+          userName: user.displayName ? user.displayName : "Anonymous",
+          email: user.email,
+          time: Timestamp.now(),
+          photoURL: user.photoURL ? user.photoURL : profileIcon,
+        }).then(() => {
+          console.log("user added");
+        });
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    };
+    if (user) {
+      addUser();
+    }
+  }, [user]);
 
   //update name function
   const updateNameFunc = (e) => {
@@ -97,7 +125,7 @@ export default function Main() {
 
   const updatePost = async () => {
     try {
-      const docRef = await addDoc(collection(db, "posts"), {
+      await addDoc(collection(db, "posts"), {
         postId: uuidv4(),
         userId: user.uid,
         userName: user.displayName ? user.displayName : "Anonymous",
@@ -114,7 +142,7 @@ export default function Main() {
         setImageUrls([]);
         setChange(!change);
       });
-      console.log("Document written with ID: ", docRef.id);
+
       setPost("");
       setImages([]);
       setImageUrls([]);
@@ -201,9 +229,11 @@ export default function Main() {
                   </button>
                 </>
               )}
+
               <button className="main-btn" onClick={logout}>
                 Logout
               </button>
+              <UserList />
             </div>
           </div>
         )}
@@ -252,7 +282,11 @@ export default function Main() {
                 {/* post button */}
               </div>
               <div className="main-post-btn-container">
-                <button className="main-input-btn" onClick={updatePost}>
+                <button
+                  disabled={countChar(post) < 1 ? true : false}
+                  className="main-input-btn"
+                  onClick={updatePost}
+                >
                   Post
                 </button>
               </div>
