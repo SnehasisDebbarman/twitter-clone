@@ -13,7 +13,10 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { ImCross } from "react-icons/im";
 
 export default function Main() {
-  const [auth, setAuth] = useState(getAuth());
+  const mAuth = getAuth();
+
+  const [auth, setAuth] = useState(mAuth);
+
   //name hook
   const [updatedName, setName] = useState("");
   //showedit hoook
@@ -29,12 +32,21 @@ export default function Main() {
   //namechange detect hook
   const [nameChange, setNameChange] = useState(false);
   //usestate for user
-  const [user, setUser] = React.useState(auth.currentUser);
+  const [user, setUser] = React.useState(mAuth.currentUser);
   //showMenu usestate
   const [showMenu, setShowMenu] = React.useState(false);
   //selfpost hook
 
   //saving auth in auth hook
+  // useEffect(() => {
+  //   onAuthStateChanged((cauth) => {
+  //     const mauth = getAuth();
+  //     setAuth(mauth);
+  //     if (mauth) {
+  //       setUser(mauth.currentUser);
+  //     }
+  //   });
+  // }, []);
 
   let navigate = useNavigate();
 
@@ -191,22 +203,24 @@ export default function Main() {
     </div>
   );
   return (
-    <div className="main-container">
-      <div className="main-container-left">
-        {user && (
-          <div className="main-card">
-            <div className="main-card-body">
-              <img
-                className="main-user-img"
-                src={user.photoURL ? user.photoURL : profileIcon}
-                alt="user"
-              />
-              <h5 className="main-card-title">{user.displayName}</h5>
-              <p className="main-card-text">{user.email}</p>
-              {/**
-               ** TODO : incomment this when you solve the image issue
-               */}
-              {/* {!showEdit && (
+    <>
+      {user && (
+        <div className="main-container">
+          <div className="main-container-left">
+            {user && (
+              <div className="main-card">
+                <div className="main-card-body">
+                  <img
+                    className="main-user-img"
+                    src={user.photoURL ? user.photoURL : profileIcon}
+                    alt="user"
+                  />
+                  <h5 className="main-card-title">{user.displayName}</h5>
+                  <p className="main-card-text">{user.email}</p>
+                  {/**
+                   ** TODO : incomment this when you solve the image issue
+                   */}
+                  {/* {!showEdit && (
                 <button
                   className="main-btn"
                   onClick={() => setShowEdit(!showEdit)}
@@ -214,105 +228,107 @@ export default function Main() {
                   Edit
                 </button>
               )} */}
-              {showEdit && (
-                <>
-                  <input
-                    className="main-input"
-                    type="text"
-                    placeholder="Name"
-                    onChange={(e) => setName(e.target.value)}
-                  />
+                  {showEdit && (
+                    <>
+                      <input
+                        className="main-input"
+                        type="text"
+                        placeholder="Name"
+                        onChange={(e) => setName(e.target.value)}
+                      />
 
-                  <button
-                    className="main-btn"
-                    onClick={(e) => updateNameFunc(e)}
-                  >
-                    update Name
+                      <button
+                        className="main-btn"
+                        onClick={(e) => updateNameFunc(e)}
+                      >
+                        update Name
+                      </button>
+                    </>
+                  )}
+
+                  <button className="main-btn" onClick={logout}>
+                    Logout
                   </button>
-                </>
-              )}
-
-              <button className="main-btn" onClick={logout}>
-                Logout
-              </button>
-              <UserList />
-            </div>
+                  <UserList />
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <div className="main-container-body">
-        <div className="main-heading">
-          <h3>Home </h3>
-          {/* create a hamburger menu */}
-          <div className="main-container-hamburger" onClick={handleMenu}>
-            {/* <div className="main-container-hamburger-line"></div>
+          <div className="main-container-body">
+            <div className="main-heading">
+              <h3>Home </h3>
+              {/* create a hamburger menu */}
+              <div className="main-container-hamburger" onClick={handleMenu}>
+                {/* <div className="main-container-hamburger-line"></div>
             <div className="main-container-hamburger-line"></div>
             <div className="main-container-hamburger-line"></div> */}
-            {!showMenu ? <GiHamburgerMenu /> : <ImCross />}
-          </div>
-        </div>
+                {!showMenu ? <GiHamburgerMenu /> : <ImCross />}
+              </div>
+            </div>
 
-        <div>
-          {/* write jsx user image with input */}
-          {user && (
-            <div className="input-container">
-              <div className="input-post-holder">
-                <img
-                  className="main-input-user-img"
-                  src={user.photoURL ? user.photoURL : profileIcon}
-                  alt="user"
-                />
-                <textarea
-                  className="main-input-post"
-                  type="text"
-                  placeholder="What's Happening?"
-                  value={post}
-                  onChange={(e) => {
-                    //create a program which convert user-entered whitespace to a template literal
-                    //and then convert it back to a string
-                    setPost(e.target.value);
-                  }}
-                />
-                {/*
-                 *! TODO: should change this to a function when you solved upload image problem
-                 */}
-                {/* {uploadImage}
+            <div>
+              {/* write jsx user image with input */}
+              {user && (
+                <div className="input-container">
+                  <div className="input-post-holder">
+                    <img
+                      className="main-input-user-img"
+                      src={user.photoURL ? user.photoURL : profileIcon}
+                      alt="user"
+                    />
+                    <textarea
+                      className="main-input-post"
+                      type="text"
+                      placeholder="What's Happening?"
+                      value={post}
+                      onChange={(e) => {
+                        //create a program which convert user-entered whitespace to a template literal
+                        //and then convert it back to a string
+                        setPost(e.target.value);
+                      }}
+                    />
+                    {/*
+                     *! TODO: should change this to a function when you solved upload image problem
+                     */}
+                    {/* {uploadImage}
 
                 <div></div>
                 <div></div>
                 {showUploadedImage} */}
 
-                {/* post button */}
+                    {/* post button */}
+                  </div>
+                  <div className="main-post-btn-container">
+                    <button
+                      disabled={countChar(post) < 1 ? true : false}
+                      className="main-input-btn"
+                      onClick={updatePost}
+                    >
+                      Post
+                    </button>
+                  </div>
+                </div>
+              )}
+              {/* write jsx post */}
+              <div className="main-post-container">
+                <Posts change={change} />
               </div>
-              <div className="main-post-btn-container">
-                <button
-                  disabled={countChar(post) < 1 ? true : false}
-                  className="main-input-btn"
-                  onClick={updatePost}
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          )}
-          {/* write jsx post */}
-          <div className="main-post-container">
-            <Posts change={change} />
-          </div>
 
-          {/* write jsx to for menu with user name email logout and edit button*/}
-          {showMenu && (
-            <div className="main-menu-container">
-              <div className="main-menu-container-body">
-                <div className="main-menu-container-body-user">
-                  <img
-                    className="main-menu-user-img"
-                    src={user.photoURL ? user.photoURL : profileIcon}
-                    alt="user"
-                  />
-                  <h5 className="main-menu-user-name">{user.displayName}</h5>
-                  <p className="main-menu-user-name">{user.email}</p>
-                  {/* 
+              {/* write jsx to for menu with user name email logout and edit button*/}
+              {showMenu && (
+                <div className="main-menu-container">
+                  <div className="main-menu-container-body">
+                    <div className="main-menu-container-body-user">
+                      <img
+                        className="main-menu-user-img"
+                        src={user.photoURL ? user.photoURL : profileIcon}
+                        alt="user"
+                      />
+                      <h5 className="main-menu-user-name">
+                        {user.displayName}
+                      </h5>
+                      <p className="main-menu-user-name">{user.email}</p>
+                      {/* 
                   {!showEdit && (
                     <button
                       className="main-btn"
@@ -338,15 +354,17 @@ export default function Main() {
                       </button>
                     </>
                   )} */}
-                  <button className="main-btn" onClick={logout}>
-                    Logout
-                  </button>
+                      <button className="main-btn" onClick={logout}>
+                        Logout
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

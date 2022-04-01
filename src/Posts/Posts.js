@@ -14,12 +14,17 @@ import "./posts.css";
 import { FcLike, FcLikePlaceholder } from "react-icons/fc";
 //react switch
 import Switch from "react-switch";
+import Post from "./Post";
 
 export default function Posts({ change }) {
   //create style
 
   //posts hook
   const [posts, setPosts] = React.useState([]);
+  //post hook
+  const [p, setPost] = React.useState(null);
+  //show Single Post
+  const [showSinglePost, setShowSinglePost] = React.useState(false);
   const [selfPost, setSelfPost] = useState(false);
   const [switchSeeAllPost, setSwitchSeeAllPost] = useState(true);
   React.useEffect(() => {
@@ -80,6 +85,10 @@ export default function Posts({ change }) {
     }
     return Math.round(seconds / 29030400) + " yrs";
   }
+  const handlePostClick = (post) => {
+    setPost(post);
+    setShowSinglePost(true);
+  };
 
   async function updatePostLikesCount(post) {
     const pid = post.postId;
@@ -110,78 +119,98 @@ export default function Posts({ change }) {
   }
 
   return (
-    <div className="post-cards-container">
-      <div className="post-heading">
-        <h3>Feeds </h3>
-        <label className="post-seeAll-switch-container">
-          <Switch onChange={handleSwitchChange} checked={switchSeeAllPost} />
-          <span>See All</span>
-        </label>
-      </div>
-      {posts.map((post, index) => {
-        return (
-          <div className="post-card" key={index}>
-            <div className="post-card-body">
-              <div className="post-flex">
-                <img
-                  src={
-                    post.photoURL
-                      ? post.photoURL
-                      : "https://i.imgur.com/2Y8WQYv.png"
-                  }
-                  alt="user"
-                />
-              </div>
-              <div>
-                <p className="post-username">
-                  {post.userName}
-                  <span className="post-hours">
-                    {timeAgo(secondsToDate(post.time.seconds))}
-                  </span>
-                </p>
-                <span className="post-body" style={{ whiteSpace: "pre-warp" }}>
-                  {
-                    //convert this text into multiple lines
-                    post.postText.split("\n").map((item, index) => {
-                      return (
-                        <span key={index}>
-                          {item}
-                          <br />
-                        </span>
-                      );
-                    })
-                  }
-                </span>
-                <button
-                  className="post-like-btn"
-                  onClick={(item) => {
-                    updatePostLikesCount(post);
-                  }}
-                >
-                  {post.postLikes.includes(getAuth().currentUser.uid) ? (
-                    <FcLike />
-                  ) : (
-                    <FcLikePlaceholder />
-                  )}
-                </button>
-                <span className="post-like-count">
-                  {" "}
-                  {"  " + post.postLikes.length}
-                </span>
-              </div>
-              {/* <div className="id">{post.id}</div> */}
-              {/*
-               * do this when you solve the problem of the image not showing
-               */}
-              {/* <div>
+    <div>
+      {!showSinglePost ? (
+        <div className="post-cards-container">
+          <div className="post-heading">
+            <h3>Feeds </h3>
+            <label className="post-seeAll-switch-container">
+              <Switch
+                onChange={handleSwitchChange}
+                checked={switchSeeAllPost}
+              />
+              <span>See All</span>
+            </label>
+          </div>
+          {posts.map((post, index) => {
+            return (
+              <div
+                className="post-card"
+                key={index}
+                onClick={() => handlePostClick(post)}
+              >
+                <div className="post-card-body">
+                  <div className="post-flex">
+                    <img
+                      src={
+                        post.photoURL
+                          ? post.photoURL
+                          : "https://i.imgur.com/2Y8WQYv.png"
+                      }
+                      alt="user"
+                    />
+                  </div>
+                  <div>
+                    <p className="post-username">
+                      {post.userName}
+                      <span className="post-hours">
+                        {timeAgo(secondsToDate(post.time.seconds))}
+                      </span>
+                    </p>
+                    <span
+                      className="post-body"
+                      style={{ whiteSpace: "pre-warp" }}
+                    >
+                      {
+                        //convert this text into multiple lines
+                        post.postText.split("\n").map((item, index) => {
+                          return (
+                            <span key={index}>
+                              {item}
+                              <br />
+                            </span>
+                          );
+                        })
+                      }
+                    </span>
+                    <button
+                      className="post-like-btn"
+                      onClick={(item) => {
+                        updatePostLikesCount(post);
+                      }}
+                    >
+                      {post.postLikes.includes(getAuth().currentUser.uid) ? (
+                        <FcLike />
+                      ) : (
+                        <FcLikePlaceholder />
+                      )}
+                    </button>
+                    <span className="post-like-count">
+                      {" "}
+                      {"  " + post.postLikes.length}
+                    </span>
+                  </div>
+                  {/* <div className="id">{post.id}</div> */}
+                  {/*
+                   * do this when you solve the problem of the image not showing
+                   */}
+                  {/* <div>
                 {post.postImage && (
                   <img className="post-image" src={post.postImage} alt="post" />
                 )}
               </div> */}
-            </div>
-          </div>
-        );
-      })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <Post
+          post={p}
+          showSinglePost={showSinglePost}
+          setShowSinglePost={setShowSinglePost}
+        />
+      )}
     </div>
   );
 }

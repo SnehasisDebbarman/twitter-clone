@@ -17,3 +17,15 @@ export const userListState = selector({
     return userList;
   },
 });
+export const savedUser = atom({
+  key: "userState", // unique ID (with respect to other atoms/selectors)
+  default: null, // default value (aka initial value)
+});
+export const userState = selector({
+  key: "userDataState", // unique ID (with respect to other atoms/selectors)
+  get: ({ get }) => {
+    const user = get(savedUser);
+
+    return user;
+  },
+});
