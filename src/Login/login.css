@@ -109,3 +109,11 @@
         z-index: 100;
         
   }
+  .loginSubmitBtn{
+    color: white;
+    font-weight: 600;
+  }
+  .googleSigninBtn{
+    color: white;
+    font-weight: 600;
+  }

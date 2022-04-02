@@ -1,14 +1,8 @@
 import React, { useEffect } from "react";
 import "./userlist.css";
-import {
-  collection,
-  getDocs,
-  setDoc,
-  doc,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../fb";
+import { getAuth } from "firebase/auth";
 //recoil imports
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userListState, usersState } from "../StateManagement/Actions";
@@ -17,21 +11,21 @@ export default function UserList() {
   const [userList, setUserList] = useRecoilState(usersState);
 
   const users = useRecoilValue(userListState);
+  const mAuth = getAuth();
 
-  async function getAllPosts() {
+  async function getAllUsers() {
     const userslist = [];
     const querySnapshot = await getDocs(collection(db, "users"));
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      //console.log(doc.id, " => ", doc.data());
       userslist.push({ ...doc.data() });
     });
-    setUserList(userslist);
 
-    // console.log(userslist);
+    //remove current user from list
+    userslist.splice(userslist.indexOf(mAuth.currentUser), 1);
+    setUserList(userslist);
   }
   useEffect(() => {
-    getAllPosts();
+    getAllUsers();
   }, []);
   return (
     <div className="user-list-container">

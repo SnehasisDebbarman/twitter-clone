@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 //Redirect of
 import { useNavigate } from "react-router-dom";
 
-import { provider, auth as fbAuth } from "../fb.js";
+import { provider } from "../fb.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -23,11 +23,10 @@ const Login = () => {
   const auth = getAuth();
 
   useEffect(() => {
-    setUser(fbAuth.currentUser);
     if (user) {
       navigate("main");
     }
-  }, [user, navigate]);
+  }, [user]);
 
   if (user) {
     navigate("main");
@@ -42,56 +41,39 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setTimeout(() => {}, 2000);
-    // setPersistence(auth, inMemoryPersistence).then(() => {
-    return signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed in
         const user = userCredential.user;
-
         setUser(user);
-        // setUserData(user);
-
         setLoading(false);
-        // ...
       })
       .catch((error) => {
-        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        alert("error", errorMessage, errorCode);
+        console.log(errorCode, errorMessage);
       });
-    // });
   };
 
   const signin = () => {
     const auth = getAuth();
-    // setPersistence(auth, inMemoryPersistence).then(() => {
-    return signInWithPopup(auth, provider)
+    signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-
-        // The signed-in user info.
-
         const user = result.user;
-        // setUserData(user);
         setUser(user);
         console.log(user);
-        // ...
       })
       .catch((error) => {
-        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        alert("error", errorMessage, errorCode);
+        //alert("error", errorMessage, errorCode);
+        console.log(errorCode, errorMessage);
       });
-    // });
   };
 
   return (
     <div className="login-card">
-      <form className="login-form" onSubmit={signInWithEmail}>
+      <form className="login-form">
         <h3 className="login-heading">Login</h3>
         <input
           className="loginInput"
@@ -107,7 +89,11 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="loginSubmitBtn" type="submit">
+        <button
+          className="loginSubmitBtn"
+          type="submit"
+          onClick={signInWithEmail}
+        >
           Login
         </button>
         <div className="divider">or continue with</div>
@@ -121,8 +107,6 @@ const Login = () => {
           <strong onClick={signUpRedirect}>Sign up</strong>
         </p>
       </form>
-      {/* create divider with "or continue text " in it */}
-      {/* loading popup */}
       {loading && (
         <div className="loading-container">
           <div className="lds-ellipsis">
