@@ -6,6 +6,7 @@ import { getAuth } from "firebase/auth";
 //recoil imports
 import { useRecoilState, useRecoilValue } from "recoil";
 import { userListState, usersState } from "../StateManagement/Actions";
+
 export default function UserList() {
   //recoil state for userList
   const [userList, setUserList] = useRecoilState(usersState);
@@ -21,30 +22,31 @@ export default function UserList() {
     });
 
     //remove current user from list
-    userslist.splice(userslist.indexOf(mAuth.currentUser), 1);
     setUserList(userslist);
   }
   useEffect(() => {
     getAllUsers();
-  }, []);
+  }, [mAuth.currentUser]);
   return (
-    <div className="user-list-container">
+    <div className="main-ul-container">
       <h3>Users</h3>
-      <div>
-        {users.map((user) => {
-          return (
-            <div className="user-list-item" key={user.userId}>
-              <div className="user-list-img-container">
-                <img
-                  className="user-list-img"
-                  src={user.photoURL}
-                  alt="profile"
-                />
+      <div className="user-list-container">
+        <div>
+          {users.map((user) => {
+            return (
+              <div className="user-list-item" key={user.userId}>
+                <div className="user-list-img-container">
+                  <img
+                    className="user-list-img"
+                    src={user.photoURL}
+                    alt="profile"
+                  />
+                </div>
+                <div className="user-list-name">{user.userName}</div>
               </div>
-              <div className="user-list-name">{user.userName}</div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );

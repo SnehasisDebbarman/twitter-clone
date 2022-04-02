@@ -3,11 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { provider } from "../fb.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup } from "firebase/auth";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
-
-import profileIcon from "../assets/profile.png";
 import "./login.css";
 import "./loading.css";
 
@@ -58,7 +56,7 @@ const Login = () => {
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
+        //const credential = GoogleAuthProvider.credentialFromResult(result);
         const user = result.user;
         setUser(user);
         console.log(user);

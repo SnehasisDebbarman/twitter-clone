@@ -54,7 +54,6 @@ export default function Signup() {
   //check user is null or not and redirect to main page
   useEffect(() => {
     if (user) {
-      navigate("../main", { replace: true });
     }
   }, [user]);
 
@@ -71,14 +70,12 @@ export default function Signup() {
       .then((userCredential) => {
         // Signed in
         const user = userCredential.user;
-        //adding user information in database
-
-        //updated the name
         updateName(auth, updatedName);
         setTimeout(() => {
           setUser(user);
         }, 3000);
         setLoading(false);
+        navigate("../main", { replace: true });
 
         // ...
       })
@@ -87,6 +84,7 @@ export default function Signup() {
         const errorMessage = error.message;
         //show error message
         alert(errorMessage);
+        setLoading(false);
         // ..
       });
   };

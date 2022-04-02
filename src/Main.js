@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import profileIcon from "./assets/profile.png";
-import { db, storage } from "./fb";
+import { db } from "./fb";
 import { doc, collection, addDoc, setDoc, Timestamp } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import Posts from "./Posts/Posts";
@@ -30,7 +30,7 @@ export default function Main() {
   //change detect hook
   const [change, setChange] = useState(false);
   //namechange detect hook
-  const [nameChange, setNameChange] = useState(false);
+  //const [nameChange, setNameChange] = useState(false);
   //usestate for user
   const [user, setUser] = React.useState(mAuth.currentUser);
   //showMenu usestate
@@ -210,13 +210,18 @@ export default function Main() {
             {user && (
               <div className="main-card">
                 <div className="main-card-body">
-                  <img
-                    className="main-user-img"
-                    src={user.photoURL ? user.photoURL : profileIcon}
-                    alt="user"
-                  />
-                  <h5 className="main-card-title">{user.displayName}</h5>
-                  <p className="main-card-text">{user.email}</p>
+                  <div className="main-user-info-container">
+                    <img
+                      className="main-user-img"
+                      src={user.photoURL ? user.photoURL : profileIcon}
+                      alt="user"
+                    />
+                    <h5 className="main-card-title">{user.displayName}</h5>
+                    <p className="main-card-text">{user.email}</p>
+                    <button className="main-btn" onClick={logout}>
+                      Logout
+                    </button>
+                  </div>
                   {/**
                    ** TODO : incomment this when you solve the image issue
                    */}
@@ -227,7 +232,7 @@ export default function Main() {
                 >
                   Edit
                 </button>
-              )} */}
+             */}
                   {showEdit && (
                     <>
                       <input
@@ -246,9 +251,6 @@ export default function Main() {
                     </>
                   )}
 
-                  <button className="main-btn" onClick={logout}>
-                    Logout
-                  </button>
                   <UserList />
                 </div>
               </div>
