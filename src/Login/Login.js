@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 //Redirect of
 import { useNavigate } from "react-router-dom";
-
-import { provider } from "../fb.js";
-import { getAuth, signInWithPopup } from "firebase/auth";
+import {
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getAuth,
+} from "firebase/auth";
+import { auth, provider } from "../fb";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
 import "./login.css";
@@ -16,15 +20,16 @@ const Login = () => {
   const [password, setPassword] = useState("");
   //loading function
   const [loading, setLoading] = useState(false);
+  // const auth = getAuth();
+  // const provider = new GoogleAuthProvider();
 
   let navigate = useNavigate();
-  const auth = getAuth();
 
   useEffect(() => {
     if (user) {
       navigate("main");
     }
-  }, [user]);
+  }, []);
 
   if (user) {
     navigate("main");
@@ -49,23 +54,32 @@ const Login = () => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorCode, errorMessage);
+        setLoading(false);
+        alert("error", errorMessage, errorCode);
       });
   };
 
-  const signin = () => {
-    const auth = getAuth();
+  const signin = (e) => {
+    e.preventDefault();
     signInWithPopup(auth, provider)
       .then((result) => {
-        //const credential = GoogleAuthProvider.credentialFromResult(result);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
         const user = result.user;
         setUser(user);
-        console.log(user);
+        // ...
       })
       .catch((error) => {
+        // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        //alert("error", errorMessage, errorCode);
-        console.log(errorCode, errorMessage);
+        // The email of the user's account used.
+        const email = error.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        console.log("error", errorMessage, errorCode, email);
+        // ...
       });
   };
 
