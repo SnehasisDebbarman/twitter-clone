@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
-//Redirect of
 import { useNavigate } from "react-router-dom";
-import {
-  signInWithPopup,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  getAuth,
-} from "firebase/auth";
+import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth, provider } from "../fb";
 
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -15,21 +9,31 @@ import "./loading.css";
 
 const Login = () => {
   const [user, setUser] = useState(null);
-  //use state hook for email and password
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //loading function
   const [loading, setLoading] = useState(false);
-  // const auth = getAuth();
-  // const provider = new GoogleAuthProvider();
-
+  const debugRedirectResult = async () => {
+    try {
+      const result = await getRedirectResult(auth);
+      if (result) {
+        console.log(result);
+        setUser(result.user);
+        setLoading(false);
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
   let navigate = useNavigate();
+  useEffect(() => {
+    debugRedirectResult();
+  });
 
   useEffect(() => {
     if (user) {
       navigate("main");
     }
-  }, []);
+  }, [user]);
 
   if (user) {
     navigate("main");
@@ -58,29 +62,15 @@ const Login = () => {
         alert("error", errorMessage, errorCode);
       });
   };
-
-  const signin = (e) => {
+  // On Button Click
+  const signUpGoogle = async (e) => {
     e.preventDefault();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        setUser(user);
-        // ...
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log("error", errorMessage, errorCode, email);
-        // ...
-      });
+    setLoading(true);
+    try {
+      await signInWithRedirect(auth, provider);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -110,7 +100,7 @@ const Login = () => {
         </button>
         <div className="divider">or continue with</div>
 
-        <button className="googleSigninBtn" onClick={signin}>
+        <button className="googleSigninBtn" onClick={signUpGoogle}>
           Sign in with Google
         </button>
 
